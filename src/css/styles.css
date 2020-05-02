@@ -9,7 +9,7 @@ body {
 }
 
 header {
-  background: navy;
+  background: black;
   color: white;
   display: flex;
   justify-content: space-between;
