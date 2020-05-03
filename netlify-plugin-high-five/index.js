@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+const gh = require('parse-github-url');
 
 module.exports = {
   async onPostBuild({ utils }) {
@@ -19,9 +20,8 @@ module.exports = {
       REVIEW_ID: process.env.REVIEW_ID,
     });
 
-    const url = new URL(process.env.REPOSITORY_URL);
-    const [owner, repo] = url.pathname.split('/').filter(Boolean);
-    const apiBase = `https://api.github.com/repos/${owner}/${repo}/issues`;
+    const { owner, name } = gh(process.env.REPOSITORY_URL);
+    const apiBase = `https://api.github.com/repos/${owner}/${name}/issues`;
 
     let apiURL;
     let httpMethod;
