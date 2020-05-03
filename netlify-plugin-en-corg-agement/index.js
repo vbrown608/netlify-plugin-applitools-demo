@@ -8,12 +8,15 @@ const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
 
 module.exports = {
-  async onPreBuild({ utils }) {
+  onPreBuild: async ({ utils }) => {
     if (await utils.cache.restore(CACHE_DIR)) {
       console.log('found a corgi cache');
+      utils.run('ls');
     } else {
       console.log(`no corgi cache found at ${CACHE_DIR}`);
+      utils.run('ls');
       utils.run('mkdir', [CACHE_DIR]);
+      utils.run('ls');
     }
   },
   async onPostBuild({ utils }) {
@@ -79,5 +82,7 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
     } else {
       console.log('unable to cache corgi details');
     }
+
+    utils.run('ls');
   },
 };
