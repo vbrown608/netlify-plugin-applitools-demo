@@ -2,6 +2,10 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const gh = require('parse-github-url');
 
+const CACHE_FILE = '.netlify-plugin-high-five.json';
+const CORGI_IMG_URL =
+  'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
+
 module.exports = {
   async onPostBuild({ utils }) {
     if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
@@ -25,19 +29,17 @@ module.exports = {
 
     let apiURL;
     let httpMethod;
-    if (await utils.cache.restore('.netlify-plugin-high-five-comment')) {
-      const commentID = fs.readFileSync(
-        '.netlify-plugin-high-five-comment',
-        'utf-8',
-      );
+    let updateCount = 1;
+    if (await utils.cache.restore(CACHE_FILE)) {
+      const { commentID, count } = require(CACHE_FILE);
 
       apiURL = `${apiBase}/comments/${commentID}`;
       httpMethod = 'PATCH';
+      updateCount = count;
     } else {
       apiURL = `${apiBase}/${process.env.REVIEW_ID}/comments`;
       httpMethod = 'POST';
     }
-    // const commentID =
 
     const response = await fetch(apiURL, {
       method: httpMethod,
@@ -46,18 +48,22 @@ module.exports = {
       },
       body: JSON.stringify({
         body: `
-You’re doing great! This plugin is awesome!
+Here’s a little en-_corg_-agement for you: you’re doing a great job! Keep it up!
 
-![corgi](https://www.partycorgi.com/party-corgi.gif)
-
-This comment was updated by <code>netlify-plugin-high-five</code>
+${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
 `,
       }),
     })
       .then((res) => res.json())
       .catch((err) => console.error(err));
 
-    fs.writeFileSync('.netlify-plugin-high-five-comment', response.id);
-    await utils.cache.save('.netlify-plugin-high-five-comment');
+    fs.writeFileSync(
+      CACHE_FILE,
+      JSON.stringify({
+        commentID: response.id,
+        count: updateCount + 1,
+      }),
+    );
+    await utils.cache.save(CACHE_FILE);
   },
 };
