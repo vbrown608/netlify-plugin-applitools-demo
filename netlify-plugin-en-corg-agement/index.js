@@ -17,9 +17,6 @@ module.exports = {
       console.log('found a corgi cache');
     } else {
       console.log(`no corgi cache found at ${CACHE_PATH}`);
-      utils.run('ls');
-      utils.run('mkdir', [CACHE_PATH]);
-      utils.run('ls');
     }
   },
   async onPostBuild({ utils }) {
@@ -50,7 +47,9 @@ module.exports = {
     let updateCount;
 
     try {
-      const { commentID, count } = require(CACHE_PATH);
+      const { commentID, count } = JSON.parse(
+        fs.readFileSync(CACHE_PATH, 'utf-8'),
+      );
 
       apiURL = `${apiBase}/comments/${commentID}`;
       httpMethod = 'PATCH';
