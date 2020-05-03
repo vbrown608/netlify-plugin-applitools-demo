@@ -71,6 +71,7 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
         count: updateCount,
       }),
     );
+
     fs.writeFileSync(
       CACHE_PATH,
       JSON.stringify({
@@ -78,12 +79,13 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
         count: updateCount,
       }),
     );
+
+    const test = fs.readFileSync(CACHE_PATH, 'utf-8');
+
+    console.log({ test });
+
     if (!(await utils.cache.save(CACHE_PATH))) {
       console.log(`couldn’t cache corgi details at ${CACHE_PATH}`);
     }
-
-    utils.run('echo', [CACHE_PATH]);
-    utils.run('ls');
-    utils.run('cat', [CACHE_PATH]);
   },
 };
