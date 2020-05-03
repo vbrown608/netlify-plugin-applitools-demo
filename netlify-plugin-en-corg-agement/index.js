@@ -12,15 +12,11 @@ const CORGI_IMG_URL =
 
 module.exports = {
   onPreBuild: async ({ utils }) => {
-    console.log({ cwd: process.cwd() });
-    if (await utils.cache.restore(CACHE_PATH)) {
-      console.log('found a corgi cache');
-    } else {
+    if (!(await utils.cache.restore(CACHE_PATH))) {
       console.log(`no corgi cache found at ${CACHE_PATH}`);
     }
   },
   async onPostBuild({ utils }) {
-    console.log({ cwd: process.cwd() });
     if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
       return;
     }
@@ -31,13 +27,6 @@ module.exports = {
       );
       return;
     }
-
-    console.log({
-      REPOSITORY_URL: process.env.REPOSITORY_URL,
-      BRANCH: process.env.BRANCH,
-      PULL_REQUEST: process.env.PULL_REQUEST,
-      REVIEW_ID: process.env.REVIEW_ID,
-    });
 
     const { owner, name } = gh(process.env.REPOSITORY_URL);
     const apiBase = `https://api.github.com/repos/${owner}/${name}/issues`;
@@ -89,13 +78,12 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
         count: updateCount,
       }),
     );
-    if (await utils.cache.save(CACHE_PATH)) {
-      console.log(`cached corgi details at ${CACHE_PATH}`);
-    } else {
-      console.log('unable to cache corgi details');
+    if (!(await utils.cache.save(CACHE_PATH))) {
+      console.log(`couldn’t cache corgi details at ${CACHE_PATH}`);
     }
 
-    utils.run('ls', [CACHE_PATH]);
+    utils.run('echo', [CACHE_PATH]);
+    utils.run('ls');
     utils.run('cat', [CACHE_PATH]);
   },
 };
