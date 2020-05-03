@@ -17,7 +17,7 @@ module.exports = {
     console.log({ wat });
 
     try {
-      const file = fs.readFileSync(CACHE_PATH, 'ut8-8');
+      const file = fs.readFileSync(CACHE_PATH, 'utf-8');
       console.log({ file });
     } catch (err) {
       console.log({ err });
