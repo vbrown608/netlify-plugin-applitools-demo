@@ -74,6 +74,12 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
       .then((res) => res.json())
       .catch((err) => console.error(err));
 
+    console.log(
+      JSON.stringify({
+        commentID: response.id,
+        count: updateCount + 1,
+      }),
+    );
     fs.writeFileSync(
       CACHE_FILE,
       JSON.stringify({
@@ -87,7 +93,7 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
       console.log('unable to cache corgi details');
     }
 
-    utils.run('ls');
-    utils.run('cat', CACHE_FILE);
+    utils.run('ls', [CACHE_DIR]);
+    utils.run('cat', [CACHE_FILE]);
   },
 };
