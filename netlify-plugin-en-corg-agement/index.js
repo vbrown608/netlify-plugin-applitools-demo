@@ -4,8 +4,8 @@ const fs = require('fs');
 const gh = require('parse-github-url');
 
 const CACHE_PATH = path.resolve(
-  __dirname,
-  '/.netlify-plugin-en-corg-agement-cache',
+  process.cwd(),
+  '.netlify-plugin-en-corg-agement-cache',
 );
 const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
