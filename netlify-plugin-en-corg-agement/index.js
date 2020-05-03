@@ -2,16 +2,18 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const gh = require('parse-github-url');
 
-const CACHE_FILE = '../../buildhome/.cache/netlify-plugin-en-corg-agement.json';
+const CACHE_DIR = 'netlify-plugin-en-corg-agement';
+const CACHE_FILE = `${CACHE_DIR}/cache.json`;
 const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
 
 module.exports = {
   async onPreBuild({ utils }) {
-    if (await utils.cache.restore(CACHE_FILE)) {
+    if (await utils.cache.restore(CACHE_DIR)) {
       console.log('found a corgi cache');
     } else {
-      console.log(`no corgi cache found at ${CACHE_FILE}`);
+      console.log(`no corgi cache found at ${CACHE_DIR}`);
+      utils.run('mkdir', [CACHE_DIR]);
     }
   },
   async onPostBuild({ utils }) {
@@ -72,8 +74,8 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
         count: updateCount + 1,
       }),
     );
-    if (await utils.cache.save(CACHE_FILE)) {
-      console.log('cached corgi details');
+    if (await utils.cache.save(CACHE_DIR)) {
+      console.log(`cached corgi details at ${CACHE_FILE}`);
     } else {
       console.log('unable to cache corgi details');
     }
