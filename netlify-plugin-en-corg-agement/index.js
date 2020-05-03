@@ -16,7 +16,7 @@ module.exports = {
       console.log(`no corgi cache found at ${CACHE_PATH}`);
     }
   },
-  async onPostBuild({ utils }) {
+  onPostBuild: async ({ utils }) => {
     if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
       return;
     }
@@ -84,8 +84,8 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
 
     console.log({ test });
 
-    if (!(await utils.cache.save(CACHE_PATH))) {
-      console.log(`couldn’t cache corgi details at ${CACHE_PATH}`);
-    }
+    const wat = await utils.cache.save(CACHE_PATH);
+
+    console.log({ wat });
   },
 };
