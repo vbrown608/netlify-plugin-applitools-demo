@@ -1,8 +1,9 @@
+const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const gh = require('parse-github-url');
 
-const CACHE_FILE = '.netlify-plugin-high-five.json';
+const CACHE_FILE = '../../buildhome/.cache/netlify-plugin-en-corg-agement.json';
 const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
 
