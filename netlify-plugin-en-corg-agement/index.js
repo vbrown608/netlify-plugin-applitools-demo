@@ -1,4 +1,3 @@
-const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const gh = require('parse-github-url');
@@ -8,6 +7,13 @@ const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
 
 module.exports = {
+  async onPreBuild({ utils }) {
+    if (await utils.cache.restore(CACHE_FILE)) {
+      console.log('found a corgi cache');
+    } else {
+      console.log(`no corgi cache found at ${CACHE_FILE}`);
+    }
+  },
   async onPostBuild({ utils }) {
     if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
       return;
@@ -31,15 +37,14 @@ module.exports = {
     let apiURL;
     let httpMethod;
     let updateCount = 1;
-    if (await utils.cache.restore(CACHE_FILE)) {
-      console.log('found a corgi cache');
+
+    try {
       const { commentID, count } = require(CACHE_FILE);
 
       apiURL = `${apiBase}/comments/${commentID}`;
       httpMethod = 'PATCH';
       updateCount = count;
-    } else {
-      console.log('no corgi cache found');
+    } catch (e) {
       apiURL = `${apiBase}/${process.env.REVIEW_ID}/comments`;
       httpMethod = 'POST';
     }
