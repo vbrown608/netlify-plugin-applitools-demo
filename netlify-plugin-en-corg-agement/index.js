@@ -12,6 +12,16 @@ const CORGI_IMG_URL =
 
 module.exports = {
   onPreBuild: async ({ utils }) => {
+    const wat = await utils.cache.restore(CACHE_PATH);
+
+    console.log({ wat });
+
+    try {
+      const file = fs.readFileSync(CACHE_PATH, 'ut8-8');
+      console.log({ file });
+    } catch (err) {
+      console.log({ err });
+    }
     if (!(await utils.cache.restore(CACHE_PATH))) {
       console.log(`no corgi cache found at ${CACHE_PATH}`);
     }
