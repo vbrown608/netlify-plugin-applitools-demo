@@ -31,12 +31,14 @@ module.exports = {
     let httpMethod;
     let updateCount = 1;
     if (await utils.cache.restore(CACHE_FILE)) {
+      console.log('found a corgi cache');
       const { commentID, count } = require(CACHE_FILE);
 
       apiURL = `${apiBase}/comments/${commentID}`;
       httpMethod = 'PATCH';
       updateCount = count;
     } else {
+      console.log('no corgi cache found');
       apiURL = `${apiBase}/${process.env.REVIEW_ID}/comments`;
       httpMethod = 'POST';
     }
@@ -64,6 +66,10 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
         count: updateCount + 1,
       }),
     );
-    await utils.cache.save(CACHE_FILE);
+    if (await utils.cache.save(CACHE_FILE)) {
+      console.log('cached corgi details');
+    } else {
+      console.log('unable to cache corgi details');
+    }
   },
 };
