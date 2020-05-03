@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const gh = require('parse-github-url');
 
-const CACHE_DIR = 'netlify-plugin-en-corg-agement';
+const CACHE_DIR = 'netlify-plugin-en-corg-agement-cache';
 const CACHE_FILE = `${CACHE_DIR}/cache.json`;
 const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
