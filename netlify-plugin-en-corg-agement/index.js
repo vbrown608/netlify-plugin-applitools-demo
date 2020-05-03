@@ -3,33 +3,35 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const gh = require('parse-github-url');
 
-const CACHE_DIR = path.resolve(
-  process.cwd(),
-  'netlify-plugin-en-corg-agement-cache',
+const CACHE_PATH = path.resolve(
+  __dirname,
+  '/.netlify-plugin-en-corg-agement-cache',
 );
-const CACHE_FILE = `${CACHE_DIR}/cache.json`;
 const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
 
 module.exports = {
   onPreBuild: async ({ utils }) => {
-    if (await utils.cache.restore(CACHE_DIR)) {
+    console.log({ cwd: process.cwd() });
+    if (await utils.cache.restore(CACHE_PATH)) {
       console.log('found a corgi cache');
-      utils.run('ls');
     } else {
-      console.log(`no corgi cache found at ${CACHE_DIR}`);
+      console.log(`no corgi cache found at ${CACHE_PATH}`);
       utils.run('ls');
-      utils.run('mkdir', [CACHE_DIR]);
+      utils.run('mkdir', [CACHE_PATH]);
       utils.run('ls');
     }
   },
   async onPostBuild({ utils }) {
+    console.log({ cwd: process.cwd() });
     if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
       return;
     }
 
     if (!process.env.GITHUB_TOKEN) {
-      console.log('please add GITHUB_TOKEN to your environment');
+      console.log(
+        'please add GITHUB_TOKEN with the public_repo scope to your environment',
+      );
       return;
     }
 
@@ -45,17 +47,18 @@ module.exports = {
 
     let apiURL;
     let httpMethod;
-    let updateCount = 1;
+    let updateCount;
 
     try {
-      const { commentID, count } = require(CACHE_FILE);
+      const { commentID, count } = require(CACHE_PATH);
 
       apiURL = `${apiBase}/comments/${commentID}`;
       httpMethod = 'PATCH';
-      updateCount = count;
+      updateCount = count + 1;
     } catch (e) {
       apiURL = `${apiBase}/${process.env.REVIEW_ID}/comments`;
       httpMethod = 'POST';
+      updateCount = 1;
     }
 
     const response = await fetch(apiURL, {
@@ -77,23 +80,23 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
     console.log(
       JSON.stringify({
         commentID: response.id,
-        count: updateCount + 1,
+        count: updateCount,
       }),
     );
     fs.writeFileSync(
-      CACHE_FILE,
+      CACHE_PATH,
       JSON.stringify({
         commentID: response.id,
-        count: updateCount + 1,
+        count: updateCount,
       }),
     );
-    if (await utils.cache.save(CACHE_DIR)) {
-      console.log(`cached corgi details at ${CACHE_FILE}`);
+    if (await utils.cache.save(CACHE_PATH)) {
+      console.log(`cached corgi details at ${CACHE_PATH}`);
     } else {
       console.log('unable to cache corgi details');
     }
 
-    utils.run('ls', [CACHE_DIR]);
-    utils.run('cat', [CACHE_FILE]);
+    utils.run('ls', [CACHE_PATH]);
+    utils.run('cat', [CACHE_PATH]);
   },
 };
