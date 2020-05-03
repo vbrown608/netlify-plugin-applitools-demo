@@ -8,14 +8,14 @@ const CORGI_IMG_URL =
   'https://res.cloudinary.com/jlengstorf/image/upload/q_auto,w_50/v1586558217/party-corgi.gif';
 
 module.exports = {
-  onPreBuild: async ({ utils }) => {
-    if (await utils.cache.restore(CACHE_DIR)) {
+  onPreBuild: async ({ utils, constants: { PUBLISH_DIR } }) => {
+    if (await utils.cache.restore(`${PUBLISH_DIR}/${CACHE_DIR}`)) {
       console.log('found a corgi cache');
       utils.run('ls');
     } else {
-      console.log(`no corgi cache found at ${CACHE_DIR}`);
+      console.log(`no corgi cache found at ${PUBLISH_DIR}/${CACHE_DIR}`);
       utils.run('ls');
-      utils.run('mkdir', [CACHE_DIR]);
+      utils.run('mkdir', [`${PUBLISH_DIR}/${CACHE_DIR}`]);
       utils.run('ls');
     }
   },
@@ -44,7 +44,7 @@ module.exports = {
     let updateCount = 1;
 
     try {
-      const { commentID, count } = require(CACHE_FILE);
+      const { commentID, count } = require(`${PUBLISH_DIR}/${CACHE_FILE}`);
 
       apiURL = `${apiBase}/comments/${commentID}`;
       httpMethod = 'PATCH';
@@ -77,8 +77,8 @@ ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
         count: updateCount + 1,
       }),
     );
-    if (await utils.cache.save(CACHE_DIR)) {
-      console.log(`cached corgi details at ${CACHE_FILE}`);
+    if (await utils.cache.save(`${PUBLISH_DIR}/${CACHE_DIR}`)) {
+      console.log(`cached corgi details at ${PUBLISH_DIR}/${CACHE_FILE}`);
     } else {
       console.log('unable to cache corgi details');
     }
