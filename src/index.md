@@ -7,4 +7,4 @@ title: Home
 
 Any changes will get caught by the visual diffing tool!
 
-And how about a little encouragement?
+And how about a little more encouragement?
