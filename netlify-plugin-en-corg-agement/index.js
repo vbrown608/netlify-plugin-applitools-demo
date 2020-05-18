@@ -27,66 +27,65 @@ module.exports = {
     }
   },
   onPostBuild: async ({ utils }) => {
-    if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
-      return;
-    }
+    // if (process.env.CONTEXT !== 'deploy-preview' || !process.env.PULL_REQUEST) {
+    //   return;
+    // }
 
-    if (!process.env.GITHUB_TOKEN) {
-      console.log(
-        'please add GITHUB_TOKEN with the public_repo scope to your environment',
-      );
-      return;
-    }
-
-    const { owner, name } = gh(process.env.REPOSITORY_URL);
-    const apiBase = `https://api.github.com/repos/${owner}/${name}/issues`;
-
-    let apiURL;
-    let httpMethod;
-    let updateCount;
-
-    try {
-      const { commentID, count } = JSON.parse(
-        fs.readFileSync(CACHE_PATH, 'utf-8'),
-      );
-
-      apiURL = `${apiBase}/comments/${commentID}`;
-      httpMethod = 'PATCH';
-      updateCount = count + 1;
-    } catch (e) {
-      apiURL = `${apiBase}/${process.env.REVIEW_ID}/comments`;
-      httpMethod = 'POST';
-      updateCount = 1;
-    }
-
-    const response = await fetch(apiURL, {
-      method: httpMethod,
-      headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
-      },
-      body: JSON.stringify({
-        body: `
-Here’s a little en-_corg_-agement for you: you’re doing a great job! Keep it up!
-
-${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
-`,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.error(err));
-
-    console.log(
-      JSON.stringify({
-        commentID: response.id,
-        count: updateCount,
-      }),
-    );
+//     if (!process.env.GITHUB_TOKEN) {
+//       console.log(
+//         'please add GITHUB_TOKEN with the public_repo scope to your environment',
+//       );
+//       return;
+//     }
+//
+//     const { owner, name } = gh(process.env.REPOSITORY_URL);
+//     const apiBase = `https://api.github.com/repos/${owner}/${name}/issues`;
+//
+//     let apiURL;
+//     let httpMethod;
+//     let updateCount;
+//
+//     try {
+//       const { commentID, count } = JSON.parse(
+//         fs.readFileSync(CACHE_PATH, 'utf-8'),
+//       );
+//
+//       apiURL = `${apiBase}/comments/${commentID}`;
+//       httpMethod = 'PATCH';
+//       updateCount = count + 1;
+//     } catch (e) {
+//       apiURL = `${apiBase}/${process.env.REVIEW_ID}/comments`;
+//       httpMethod = 'POST';
+//       updateCount = 1;
+//     }
+//
+//     const response = await fetch(apiURL, {
+//       method: httpMethod,
+//       headers: {
+//         Authorization: `token ${process.env.GITHUB_TOKEN}`,
+//       },
+//       body: JSON.stringify({
+//         body: `
+// Here’s a little en-_corg_-agement for you: you’re doing a great job! Keep it up!
+//
+// ${Array(updateCount).fill(`![party corgi](${CORGI_IMG_URL})`).join(' ')}
+// `,
+//       }),
+//     })
+//       .then((res) => res.json())
+//       .catch((err) => console.error(err));
+//
+//     console.log(
+//       JSON.stringify({
+//         commentID: response.id,
+//         count: updateCount,
+//       }),
+//     );
 
     fs.writeFileSync(
       CACHE_PATH,
       JSON.stringify({
-        commentID: response.id,
-        count: updateCount,
+        foo: "BAR",
       }),
     );
 
