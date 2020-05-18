@@ -2,5 +2,8 @@
   command = "npm run build"
   publish = "_site"
 
+# [[plugins]]
+#   package = "netlify-plugin-visual-diff"
+
 [[plugins]]
-  package = "netlify-plugin-visual-diff"
+  package = "./netlify-plugin-en-corg-agement"
