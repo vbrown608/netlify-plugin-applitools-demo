@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "echo $CYPRESS_CACHE_FOLDER"
   publish = "_site"
 
 [[plugins]]
