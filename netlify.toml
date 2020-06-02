@@ -1,5 +1,5 @@
 [build]
-  command = "echo $CYPRESS_CACHE_FOLDER"
+  command = "echo $FOO"
   publish = "_site"
 
 [[plugins]]
